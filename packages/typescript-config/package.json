@@ -1,0 +1,19 @@
+{
+  "name": "@u-abac/typescript-config",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./base.json": "./base.json",
+    "./nextjs.json": "./nextjs.json",
+    "./react-library.json": "./react-library.json",
+    "./node.json": "./node.json",
+    "./*": "./*"
+  },
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json",
+    "node.json"
+  ]
+}

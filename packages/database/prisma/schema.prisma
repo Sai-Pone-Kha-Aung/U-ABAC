@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  name            String
+  passwordHash    String
+  role            String      @default("STUDENT") // ADMIN, MANAGER, STAFF, STUDENT, GUEST
+  department      String      @default("Computer Science")
+  clearanceLevel  String      @default("PUBLIC") // PUBLIC, INTERNAL, CONFIDENTIAL, TOP_SECRET
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  userAttributes  UserAttribute[]
+  actionLogs      AccessAuditLog[]
+  ownedResources  Resource[]
+}
+
+model UserAttribute {
+  id        String   @id @default(uuid())
+  userId    String
+  key       String   // e.g., "project_assigned", "graduation_year"
+  value     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}
+
+model Resource {
+  id              String   @id @default(uuid())
+  title           String
+  type            String   // e.g. "document", "grade", "research_paper"
+  department      String
+  classification  String   @default("INTERNAL")
+  ownerId         String?
+  owner           User?    @relation(fields: [ownerId], references: [id])
+  metadata        String?  // JSON stringified additional attributes
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Policy {
+  id           String       @id @default(uuid())
+  name         String
+  description  String?
+  resourceType String       // e.g. "document", "grade", "*"
+  priority     Int          @default(0)
+  isEnabled    Boolean      @default(true)
+  rules        PolicyRule[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model PolicyRule {
+  id          String   @id @default(uuid())
+  policyId    String
+  policy      Policy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  name        String
+  effect      String   // PERMIT or DENY
+  actions     String   // Comma separated, e.g. "READ,CREATE"
+  conditions  String   // JSON string of ABACCondition array
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AccessAuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  resourceType String
+  resourceId   String?
+  action       String   // READ, CREATE, UPDATE, etc.
+  decision     String   // PERMIT or DENY
+  reason       String?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+}
+

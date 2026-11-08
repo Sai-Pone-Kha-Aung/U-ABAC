@@ -1,0 +1,15 @@
+{
+  "name": "@u-abac/types",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@u-abac/typescript-config": "workspace:*",
+    "typescript": "^5.8.2"
+  }
+}
+
