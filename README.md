@@ -25,6 +25,9 @@ U-ABAC/
 │
 ├── .vscode/                 # Preconfigured IDE workspace settings (workspace TypeScript SDK)
 ├── .nvmrc                   # Node.js LTS version (v22.18.0)
+├── .dockerignore            # Docker build ignore rules
+├── Dockerfile.dev           # Unified multi-workspace development Dockerfile
+├── docker-compose.yml       # Docker Compose service orchestration (Frontend, Admin, Backend)
 ├── turbo.json               # Turborepo task pipeline definition & cache rules
 ├── pnpm-workspace.yaml      # Monorepo workspaces & build approvals
 └── package.json             # Root orchestration scripts
@@ -75,29 +78,65 @@ U-ABAC/
 ## 🏷 Attributes & Permissions Matrix
 
 ### 1. Subject Attributes
+
 - **Role**: `ADMIN` | `STAFF` | `STUDENT` | `GUEST`
 - **Department**: e.g., `Computer Science`, `Electrical Engineering`, `IT Administration`
 - **Clearance Level**: `PUBLIC` (1) < `INTERNAL` (2) < `CONFIDENTIAL` (3) < `TOP_SECRET` (4)
 - **Custom Attributes**: Key-value pairs (e.g. `cohort_year: 2023`, `standing: SENIOR`, `research_lead: cs_ai_lab`)
 
 ### 2. Resource Attributes
+
 - **Type**: `syllabus`, `exam_paper`, `patent`, `policy_doc`
 - **Classification**: `PUBLIC`, `INTERNAL`, `CONFIDENTIAL`, `TOP_SECRET`
 - **Department**: Owning academic department
 - **Owner**: Creator/assignee user ID
 
 ### 3. Supported Actions
+
 `CREATE` • `READ` • `UPDATE` • `DELETE` • `EXPORT` • `APPROVE`
 
 ### 4. Rule Condition Operators
+
 `EQUALS` • `NOT_EQUALS` • `IN` • `CONTAINS` • `GTE` • `LTE`
 
 ---
 
-## 🚀 Getting Started
+## 🐳 Docker
+
+### 1. Start the Entire Stack with One Command
+
+```bash
+docker compose up --build
+```
+
+- **Frontend Portal (Next.js 16)**: [http://localhost:3000](http://localhost:3000)
+- **Admin Console (React 19 + Vite)**: [http://localhost:3001](http://localhost:3001)
+- **Backend API (Express + PDP/PEP)**: [http://localhost:4000](http://localhost:4000)
+
+### 2. Useful Docker Commands
+
+```bash
+# View live logs from all services
+docker compose logs -f
+
+# View logs from a specific service (e.g., backend)
+docker compose logs -f backend
+
+# Stop all containers
+docker compose down
+
+# Reset the database volume and rebuild fresh
+docker compose down -v
+docker compose up --build
+```
+
+---
+
+## 🚀 Local Development (Without Docker)
 
 ### Prerequisites
-- **Node.js**: `v22.18.0` (Pinned in [`.nvmrc`](file:///Users/y2k/school/sp1/U-ABAC/.nvmrc))
+
+- **Node.js**: `v22.18.0` (Pinned in [`.nvmrc`])
 - **Package Manager**: `pnpm` (v11+)
 
 ```bash
@@ -106,69 +145,81 @@ nvm use
 ```
 
 ### 1. Install Workspace Dependencies
+
 ```bash
 pnpm install
 ```
 
 ### 2. Setup the Database
+
 Pushes the schema to local SQLite and seeds initial users, resources, and policies:
+
 ```bash
 pnpm run db:push
 pnpm run db:seed
 ```
 
 ### 3. Launch Development Servers
+
 Runs all applications concurrently with live hot-reloading:
+
 ```bash
 pnpm run dev
 ```
 
-| Service | Framework | URL | Description |
-| :--- | :--- | :--- | :--- |
-| **Frontend Portal** | Next.js 16 | [http://localhost:3000](http://localhost:3000) | User access portal with identity simulator |
-| **Admin Console** | React 19 + Vite | [http://localhost:3001](http://localhost:3001) | Policy administration & audit logs |
-| **Backend API** | Express | [http://localhost:4000](http://localhost:4000) | REST API & ABAC PEP/PDP Engine |
+| Service             | Framework       | URL                                            | Description                                |
+| :------------------ | :-------------- | :--------------------------------------------- | :----------------------------------------- |
+| **Frontend Portal** | Next.js 16      | [http://localhost:3000](http://localhost:3000) | User access portal with identity simulator |
+| **Admin Console**   | React 19 + Vite | [http://localhost:3001](http://localhost:3001) | Policy administration & audit logs         |
+| **Backend API**     | Express         | [http://localhost:4000](http://localhost:4000) | REST API & ABAC PEP/PDP Engine             |
 
 ---
 
 ## 📡 REST API Endpoints
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/health` | Health check & service status |
-| `GET` | `/api/users` | List demo user identities for testing |
-| `GET` | `/api/me` | Current authenticated subject attributes |
-| `GET` | `/api/resources` | List all resources with dynamically computed read/write permissions |
-| `GET` | `/api/resources/:id` | Fetch specific resource (enforced by ABAC PEP middleware) |
-| `POST` | `/api/evaluate` | Direct PDP simulation endpoint (arbitrary Subject + Action + Resource) |
-| `GET` | `/api/policies` | List all active/inactive ABAC policies and rules |
-| `POST` | `/api/policies` | Create a new policy with custom rules and conditions |
-| `PATCH` | `/api/policies/:id/toggle` | Enable or disable a policy in real time |
-| `DELETE` | `/api/policies/:id` | Remove a policy |
-| `GET` | `/api/audit-logs` | Retrieve recent access audit events (PERMIT/DENY history) |
+| Method   | Endpoint                   | Description                                                            |
+| :------- | :------------------------- | :--------------------------------------------------------------------- |
+| `GET`    | `/api/health`              | Health check & service status                                          |
+| `GET`    | `/api/users`               | List demo user identities for testing                                  |
+| `GET`    | `/api/me`                  | Current authenticated subject attributes                               |
+| `GET`    | `/api/resources`           | List all resources with dynamically computed read/write permissions    |
+| `GET`    | `/api/resources/:id`       | Fetch specific resource (enforced by ABAC PEP middleware)              |
+| `POST`   | `/api/evaluate`            | Direct PDP simulation endpoint (arbitrary Subject + Action + Resource) |
+| `GET`    | `/api/policies`            | List all active/inactive ABAC policies and rules                       |
+| `POST`   | `/api/policies`            | Create a new policy with custom rules and conditions                   |
+| `PATCH`  | `/api/policies/:id/toggle` | Enable or disable a policy in real time                                |
+| `DELETE` | `/api/policies/:id`        | Remove a policy                                                        |
+| `GET`    | `/api/audit-logs`          | Retrieve recent access audit events (PERMIT/DENY history)              |
 
 ---
 
 ## 📜 Available Scripts
 
-| Command | Action |
-| :--- | :--- |
-| `pnpm run dev` | Boots `frontend`, `admin`, and `backend` concurrently |
-| `pnpm run build` | Builds all packages and apps with Turborepo dependency caching |
-| `pnpm run check-types` | Type-checks all 5 workspace projects with `tsc --noEmit` |
-| `pnpm run db:generate` | Generates the Prisma 7 client |
-| `pnpm run db:push` | Synchronizes SQLite database with `schema.prisma` |
-| `pnpm run db:seed` | Populates database with sample university users, resources, and rules |
-| `pnpm run db:studio` | Opens visual Prisma Studio interface in your browser |
+| Command                | Action                                                                |
+| :--------------------- | :-------------------------------------------------------------------- |
+| `pnpm run dev`         | Boots `frontend`, `admin`, and `backend` concurrently                 |
+| `pnpm run build`       | Builds all packages and apps with Turborepo dependency caching        |
+| `pnpm run check-types` | Type-checks all 5 workspace projects with `tsc --noEmit`              |
+| `pnpm run db:generate` | Generates the Prisma 7 client                                         |
+| `pnpm run db:push`     | Synchronizes SQLite database with `schema.prisma`                     |
+| `pnpm run db:seed`     | Populates database with sample university users, resources, and rules |
+| `pnpm run db:studio`   | Opens visual Prisma Studio interface in your browser                  |
 
 ---
 
 ## 🛠 Editor / IDE Notes
 
-This repository includes a preconfigured [`.vscode/settings.json`](file:///Users/y2k/school/sp1/U-ABAC/.vscode/settings.json) specifying:
+This repository includes a preconfigured [`.vscode/settings.json`] specifying:
+
 ```json
 {
   "typescript.tsdk": "node_modules/typescript/lib"
 }
 ```
+
 This ensures your editor's language server uses the workspace's local TypeScript 5.8+ compiler, resolving monorepo package symlinks (`@u-abac/*`) seamlessly.
+
+If you ever see a temporary red squiggly line in your editor after installing or switching branches, reload the TypeScript server:
+
+- Press **`Cmd + Shift + P`** (macOS) or **`Ctrl + Shift + P`** (Windows/Linux)
+- Select: **`TypeScript: Restart TS Server`**

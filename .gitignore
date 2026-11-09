@@ -36,6 +36,8 @@ pnpm-debug.log*
 *.sw?
 
 # Database
+*.db
+*.db-journal
 prisma/*.db
 prisma/*.db-journal
 

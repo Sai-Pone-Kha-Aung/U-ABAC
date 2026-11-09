@@ -1,0 +1,73 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: u-abac-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=development
+      - DATABASE_URL=file:/app/packages/database/prisma/dev.db
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/backend/node_modules
+      - /app/apps/backend/dist
+      - /app/packages/database/node_modules
+      - /app/packages/types/node_modules
+      - /app/packages/typescript-config/node_modules
+      - sqlite_data:/app/packages/database/prisma
+    command: >
+      sh -c "pnpm run db:push &&
+             pnpm run db:seed &&
+             pnpm --filter @u-abac/backend dev"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: u-abac-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_BACKEND_URL=http://localhost:4000
+    depends_on:
+      - backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/frontend/node_modules
+      - /app/apps/frontend/.next
+      - /app/packages/types/node_modules
+      - /app/packages/typescript-config/node_modules
+    command: pnpm --filter @u-abac/frontend dev
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: u-abac-admin
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - VITE_BACKEND_URL=http://localhost:4000
+    depends_on:
+      - backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/admin/node_modules
+      - /app/packages/types/node_modules
+      - /app/packages/typescript-config/node_modules
+    command: pnpm --filter @u-abac/admin dev
+
+volumes:
+  sqlite_data:
+
