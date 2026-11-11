@@ -115,12 +115,12 @@ export default function HomePage() {
         </div>
 
         {/* Identity Switcher */}
-        <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm min-w-[280px]">
+        <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs min-w-[280px]">
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
             🎭 Simulate User Identity
           </label>
           <select
-            className="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+            className="w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-slate-50 focus:outline-hidden focus:ring-2 focus:ring-blue-500 font-medium"
             value={selectedUserId}
             onChange={(e) => setSelectedUserId(e.target.value)}
           >
@@ -135,8 +135,8 @@ export default function HomePage() {
 
       {/* User Attributes Card */}
       {currentUser && (
-        <section className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
-          <div className="flex items-center justify-between mb-4 border-b pb-3">
+        <section className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs mb-8">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-200 pb-3">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
               Subject Attributes (Evaluated in PDP Engine)
@@ -208,7 +208,7 @@ export default function HomePage() {
               return (
                 <div
                   key={item.id}
-                  className={`bg-white border rounded-xl p-5 shadow-sm transition hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                  className={`bg-white border rounded-xl p-5 shadow-xs transition hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                     canRead ? 'border-slate-200' : 'border-rose-200 bg-rose-50/20'
                   }`}
                 >
@@ -261,7 +261,7 @@ export default function HomePage() {
 
                     <button
                       onClick={() => handleInspectResource(item.id)}
-                      className={`text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm ${
+                      className={`text-xs font-semibold px-4 py-2 rounded-lg transition shadow-xs ${
                         canRead
                           ? 'bg-blue-600 hover:bg-blue-700 text-white'
                           : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
@@ -279,9 +279,9 @@ export default function HomePage() {
 
       {/* Response Modal / Drawer */}
       {(activeModalData || modalError) && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border">
-            <div className="flex items-center justify-between pb-3 border-b">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-200">
               <h3 className="font-bold text-slate-900 text-lg">
                 {modalError ? '🚨 PEP Authorization Blocked' : '✅ PEP Access Granted'}
               </h3>
