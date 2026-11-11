@@ -4,6 +4,9 @@ const path = require('path');
 const nextConfig = {
   transpilePackages: ['@u-abac/types'],
   outputFileTracingRoot: path.join(__dirname, '../../'),
+  experimental: {
+    turbopackPluginRuntimeStrategy: 'workerThreads',
+  },
 };
 
 module.exports = nextConfig;
