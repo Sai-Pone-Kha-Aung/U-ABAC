@@ -11,7 +11,10 @@
     "db:push": "turbo run db:push",
     "db:seed": "turbo run db:seed",
     "db:migrate": "turbo run db:migrate",
-    "db:studio": "turbo run db:studio"
+    "db:studio": "turbo run db:studio",
+    "dev:api": "turbo run dev --filter @u-abac/backend",
+    "dev:web": "turbo run dev --filter @u-abac/frontend",
+    "dev:admin": "turbo run dev --filter @u-abac/admin"
   },
   "devDependencies": {
     "@u-abac/typescript-config": "workspace:*",
@@ -20,4 +23,3 @@
     "typescript": "^5.8.2"
   }
 }
-
