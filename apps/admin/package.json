@@ -13,7 +13,9 @@
     "@u-abac/types": "workspace:*",
     "lucide-react": "^1.16.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-router": "^8.5.1",
+    "react-router-dom": "^7.18.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.5",
@@ -26,4 +28,3 @@
     "vite": "^6.2.0"
   }
 }
-
