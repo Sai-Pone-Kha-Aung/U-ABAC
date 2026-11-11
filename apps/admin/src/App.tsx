@@ -321,7 +321,7 @@ export default function App() {
               </button>
             </div>
 
-            <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-xs">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase font-mono">
                   <tr>
